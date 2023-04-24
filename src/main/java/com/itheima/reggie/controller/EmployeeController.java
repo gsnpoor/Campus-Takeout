@@ -79,13 +79,13 @@ public class EmployeeController {
         log.info("新增员工，员工信息：{}", employee.toString());
 
         employee.setPassword(DigestUtils.md5DigestAsHex("12345".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
+        /*employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
 
         //从request请求中获取Id
         Long empId = (Long) request.getSession().getAttribute("employee");
         employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+        employee.setUpdateUser(empId);*/
 
         employeeService.save(employee);
 
@@ -94,6 +94,7 @@ public class EmployeeController {
 
     /*
      * 员工信息分页查询
+     *
      * */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
@@ -102,7 +103,7 @@ public class EmployeeController {
         //构造分页构造器
         Page pageInfo = new Page(page, pageSize);
         //构造条件构造器
-        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper();
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
         queryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
         //添加排序条件
@@ -122,11 +123,25 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
 
-        Long empId = (Long) request.getSession().getAttribute("employee");
+        /*Long empId = (Long) request.getSession().getAttribute("employee");
         employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(empId);
+        employee.setUpdateUser(empId);*/
         employeeService.updateById(employee);
 
         return R.success("员工信息修改成功");
+    }
+
+    /*
+     * 根据id查询员工信息
+     *
+     * */
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id) {
+        log.info("根据id查询员工信息...");
+        Employee employee = employeeService.getById(id);
+        if (employee != null) {
+            return R.success(employee);
+        }
+        return R.error("没有查询到对应员工信息");
     }
 }
