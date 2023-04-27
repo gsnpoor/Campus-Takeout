@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
     @Autowired
     private DishFlavorService dishFlavorService;
+
+    @Autowired
+    private DishService dishService;
 
     /*
      * 新增菜品，同时保存对应的口味数据
@@ -88,5 +92,18 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }).collect(Collectors.toList());
 
         dishFlavorService.saveBatch(flavors);
+    }
+
+    @Override
+    public void updateWithFlavor(List<Long> ids, int status) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<Dish>();
+        queryWrapper.in(Dish::getId, ids);
+        List<Dish> list = dishService.list(queryWrapper);
+        List<Dish> collect = list.stream().map((item) -> {
+            item.setStatus(status);
+            return item;
+        }).collect(Collectors.toList());
+
+        dishService.saveOrUpdateBatch(collect);
     }
 }
