@@ -585,11 +585,23 @@
 
 #main .dialogCart .divCartContent .divCartItem .divNum {
   position: absolute;
+  font-size: 15rem;
   right: 0;
   bottom: 10rem;
   display: flex;
   line-height: 36rem;
   height: 36rem;
+}
+
+#main .dialogCart .divCartItem .divNum .divDishNum {
+  font-size: 15rem;
+  font-family: PingFangSC, PingFangSC-Regular;
+  font-weight: 500;
+  text-align: center;
+  color: #333333;
+  line-height: 36rem;
+  letter-spacing: 0;
+  width: auto;
 }
 
 #main .dialogCart .divCartContent .divCartItem .divNum img {
@@ -698,6 +710,7 @@
   letter-spacing: 0;
   width: auto;
 }
+
 
 #main .detailsDialog .divNum .divTypes {
   width: 64rem;
