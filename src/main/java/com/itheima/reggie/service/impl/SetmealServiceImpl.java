@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.controller.CategoryController;
 import com.itheima.reggie.dto.SetmealDto;
+import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.mapper.SetmealMapper;
+import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.SetmealDishService;
 import com.itheima.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,12 @@ import java.util.stream.Collectors;
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> implements SetmealService {
     @Autowired
     private SetmealDishService setmealDishService;
+
+    @Autowired
+    private SetmealService setmealService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     @Transactional
@@ -61,5 +70,27 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(SetmealDish::getSetmealId,ids);
         setmealDishService.remove(lambdaQueryWrapper);
+    }
+
+    @Override
+    public SetmealDto getByIdWithFlavor(Long id) {
+        Setmeal setmeal = setmealService.getById(id);
+        SetmealDto setmealDto = new SetmealDto();
+        BeanUtils.copyProperties(setmeal, setmealDto);
+
+        LambdaQueryWrapper<SetmealDish> queryWrap = new LambdaQueryWrapper<>();
+        queryWrap.eq(id != null, SetmealDish::getSetmealId, id);
+        List<SetmealDish> setmealDishList = setmealDishService.list(queryWrap);
+
+        setmealDto.setSetmealDishes(setmealDishList);
+
+        Long categoryId = setmeal.getCategoryId();
+
+        Category category = categoryService.getById(categoryId);
+        String categoryName = category.getName();
+
+        setmealDto.setCategoryName(categoryName);
+
+        return setmealDto;
     }
 }

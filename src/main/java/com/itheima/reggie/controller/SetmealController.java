@@ -114,4 +114,16 @@ public class SetmealController {
 
         return R.success(list);
     }
+
+    @GetMapping("/{id}")
+    public R<SetmealDto> get(@PathVariable Long id){
+        SetmealDto setmealDto = setmealService.getByIdWithFlavor(id);
+        return R.success(setmealDto);
+    }
+
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto){
+
+        return R.success("修改成功");
+    }
 }
