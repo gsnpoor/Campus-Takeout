@@ -122,8 +122,9 @@ public class SetmealController {
     }
 
     @PutMapping
+    @CacheEvict(value = "setmealCache", allEntries = true)
     public R<String> update(@RequestBody SetmealDto setmealDto){
-
+        setmealService.updateByIdWithDish(setmealDto);
         return R.success("修改成功");
     }
 }
