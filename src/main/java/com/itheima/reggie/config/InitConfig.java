@@ -28,7 +28,7 @@ public class InitConfig implements InitializingBean {
     @Qualifier("userPhoneBloom")
     BloomFilter<String> userPhoneBloom;
     /**
-     * 把商品库存加载到 Redis中
+     * 把手机号加载到 Redis中
      */
     @Override
     //设置任务执行的间隔时间(1天)
