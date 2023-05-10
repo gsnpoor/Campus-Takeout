@@ -12,7 +12,7 @@ spring:
   redis:
     host: 172.18.94.129
     port: 6379
-    password: 123456
+    #password: 123456
     database: 0
   cache:
     redis:

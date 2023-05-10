@@ -1,14 +1,15 @@
 package com.itheima.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.common.hash.BloomFilter;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.User;
 import com.itheima.reggie.service.UserService;
-import com.itheima.reggie.utils.SMSUtils;
 import com.itheima.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,10 @@ public class UserController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    @Qualifier("userPhoneBloom")
+    BloomFilter<String> usersIdBloomFilter;
 
     /**
      * 发送手机短信验证码
@@ -72,6 +77,11 @@ public class UserController {
 
         //获取手机号
         String phone = map.get("phone").toString();
+
+        //判断用户是否存在
+        if (!usersIdBloomFilter.mightContain(phone + "")){
+            return R.error("用户手机号不存在");
+        }
 
         //获取验证码
         String code = map.get("code").toString();
