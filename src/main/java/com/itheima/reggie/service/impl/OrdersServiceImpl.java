@@ -33,6 +33,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Autowired
     private OrderDetailService orderDetailService;
 
+    @Autowired
+    private DishService dishService;
+
     /*
     * 用户下单
     * */
@@ -101,6 +104,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
         //向订单明细表插入数据，多条数据
         orderDetailService.saveBatch(orderDetails);
+
+        for (ShoppingCart shoppingCart : shoppingCarts) {
+            Integer shoppingCartNumber = shoppingCart.getNumber();
+            Dish dish = dishService.getById(shoppingCart.getDishId());
+            Integer dishCount = dish.getDishCount();
+            dish.setDishCount(dishCount - shoppingCartNumber);
+            dishService.updateById(dish);
+            System.out.println(dish.getName() + "剩余" + dish.getDishCount());
+        }
 
         //清空购物车数据
         shoppingCartService.remove(wrapper);

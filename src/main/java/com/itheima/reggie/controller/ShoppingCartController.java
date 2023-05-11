@@ -3,7 +3,9 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
+import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.ShoppingCart;
+import com.itheima.reggie.service.DishService;
 import com.itheima.reggie.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
+
+    @Autowired
+    private DishService dishService;
 
     @PostMapping("/add")
     public R<ShoppingCart> add(@RequestBody ShoppingCart shoppingCart) {
@@ -42,6 +47,14 @@ public class ShoppingCartController {
 
         //如果已存在，就在原来数量基础上加一
         ShoppingCart cartServiceOne = shoppingCartService.getOne(queryWrapper);
+
+        if (dishId != null) {
+            Dish dish = dishService.getById(dishId);
+            Integer dishCount = dish.getDishCount();
+            if (dishCount < (cartServiceOne == null ? 0 : cartServiceOne.getNumber()) + 1) {
+                return R.error(dish.getName() + "数量不足");
+            }
+        }
 
         if (cartServiceOne != null) {
             Integer number = cartServiceOne.getNumber();
@@ -76,9 +89,9 @@ public class ShoppingCartController {
         ShoppingCart cartServiceOne = shoppingCartService.getOne(queryWrap);
 
         Integer number = cartServiceOne.getNumber();
-        if (number == 1){
+        if (number == 1) {
             shoppingCartService.removeById(cartServiceOne);
-        }else {
+        } else {
             cartServiceOne.setNumber(number - 1);
             shoppingCartService.updateById(cartServiceOne);
         }
@@ -99,7 +112,7 @@ public class ShoppingCartController {
     }
 
     @DeleteMapping("/clean")
-    public R<String> delete(){
+    public R<String> delete() {
         Long currentId = BaseContext.getCurrentId();
         LambdaQueryWrapper<ShoppingCart> queryWrap = new LambdaQueryWrapper<>();
         queryWrap.eq(currentId != null, ShoppingCart::getUserId, currentId);

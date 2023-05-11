@@ -1,9 +1,7 @@
 package com.itheima.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -39,6 +37,9 @@ public class Dish implements Serializable {
     //图片
     private String image;
 
+    //菜品数量
+    private Integer dishCount;
+
 
     //描述信息
     private String description;
@@ -70,5 +71,8 @@ public class Dish implements Serializable {
 
     //是否删除
     private Integer isDeleted;
+
+    //版本号(实现乐观锁)
+    private Integer version;
 
 }
