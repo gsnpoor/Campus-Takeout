@@ -11,7 +11,9 @@ Just a project for java beginners to learn
 2. 技术架构
 
    应用层：SpringBoot+SpringMVC+Spring Session
+   
    数据层：Mysql+Mybatis+Redis
+   
    代码管理工具类：Git+Maven
 
 3. 项目模块
