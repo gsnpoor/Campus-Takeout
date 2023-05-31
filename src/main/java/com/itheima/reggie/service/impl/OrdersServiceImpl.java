@@ -1,5 +1,7 @@
 package com.itheima.reggie.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -63,7 +65,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         }
 
         //订单号
-        long orderId = IdWorker.getId();
+        //long orderId = IdWorker.getId();
+        Snowflake snowflake = IdUtil.getSnowflake();
+        long orderId = snowflake.nextId();
 
         AtomicInteger amount = new AtomicInteger(0);
         //总金额
